@@ -1,0 +1,4 @@
+absl-py
+numpy
+torch == 1.12.1
+tensorflow

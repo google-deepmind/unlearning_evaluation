@@ -1,25 +1,68 @@
-# unlearning_evaluation
+# Evaluation code for the NeurIPS 2023 Machine Unlearning competition
 
-TODO(b/321699583): Add a description for your new project, explain what is
-being released here, etc... Additional, the following sections are normally
-expected for all releases. Feel free to add additional sections if appropriate
-for your project.
+
+This is the code used to score submissions during the NeurIPS 2023 Machine
+Unlearning competition.
 
 ## Installation
 
-Write instructions for how the user should install your code. The instructions
-should ideally be valid when copy-pasted. You can combine this with the Usage
-section if there's no separate installation step.
+To install dependencies:
+
+  `pip install -r requirements.txt`
+
+This code also requires to have the CASIA-SURF dataset. To get this dataset,
+go to the dataset webpage:
+
+  https://sites.google.com/corp/view/face-anti-spoofing-challenge/dataset-download/casia-surf-cefacvpr2020
+
+Download the dataset license agreement from that webpage and send it to Jun Wan
+(jun.wan@ia.ac.cn). Once this is done, you should receive a link to the dataset.
+
+Once you receive the dataset link, download the files `Age_Gender.txt` and
+`CASIA_SURF_live.zip`, and unzip the latter.
+
 
 ## Usage
 
-Write example usage of your code. The instructions should ideally be valid when
-copy-pasted, and will be used by your technical reviewer to verify that your
-package functions correctly.
+The script launch.py will launch the evaluation metric and can be run as
+
+  xmanager launch.py
+
+This will call `main.py` with the specified flags for the data directory,
+checkpoint directory and output directory.
+
+The code currently evaluates a particular unlearning function (unlearning by
+simple fine-tuning) which is specified in main.py (see function `do_unlearning`
+). The user can replace the contents of `do_unlearning` with another unlearning
+algorithm.
+
+Overall, the code is structured as follows: the given unlearning algorithm will
+be ran for `_NUM_MODELS` times (512 by default) and, similarly, the oracle
+retrain-from-scratch algorithm will also be ran for that number of times. The
+retrain-from-scratch checkpoints are saved in the checkpoint directory, so that
+the second time that the code is ran they will be reloaded, to save compute.
+The forgetting quality score is then computed from the confidences of each
+forget example obtained by the unlearned and retrained models. That score is
+finally adjusted to take utility (accuracy on the retain and test sets) under
+consideration, yielding a final score.
+
+Please refer to this technical report for the mathematical definition of
+unlearning that this metric is based on, as well as a more detailed description
+of the evaluation metric:
+https://unlearning-challenge.github.io/assets/data/Machine_Unlearning_Metric.pdf
+
 
 ## Citing this work
 
-Add citation details here, usually a pastable BibTeX snippet.
+```
+@misc{neurips-2023-machine-unlearning,
+    author = {Eleni Triantafillou, Fabian Pedregosa, Jamie Hayes, Peter Kairouz, Isabelle Guyon, Meghdad Kurmanji, Gintare Karolina Dziugaite, Peter Triantafillou, Kairan Zhao, Lisheng Sun Hosoya, Julio C. S. Jacques Junior, Vincent Dumoulin, Ioannis Mitliagkas, Sergio Escalera, Jun Wan, Sohier Dane, Maggie Demkin, Walter Reade},
+    title = {NeurIPS 2023 - Machine Unlearning},
+    publisher = {Kaggle},
+    year = {2023},
+    url = {https://kaggle.com/competitions/neurips-2023-machine-unlearning}
+}
+```
 
 ## License and disclaimer
 
