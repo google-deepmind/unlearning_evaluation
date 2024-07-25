@@ -1,4 +1,4 @@
 absl-py
 numpy
-torch == 1.12.1
+torch == 2.2.0
 tensorflow
